@@ -1,11 +1,11 @@
 import { Box, Flex, Grid, GridItem, HStack, Show } from "@chakra-ui/react";
 import { useState } from "react";
-import GameGrid from "./components/GameGrid";
-import GameHeading from "./components/GameHeading";
-import GenreList from "./components/GenreList";
-import NavBar from "./components/NavBar";
-import PlatformSelector from "./components/PlatformSelector";
-import SortSelector from "./components/SortSelector";
+import GameGrid from "./components-game-section/GameGrid";
+import GameHeading from "./components-game-section/GameHeading";
+import GenreList from "./components-game-section/GenreList";
+import NavBar from "./components-game-section/NavBar";
+import PlatformSelector from "./components-game-section/PlatformSelector";
+import SortSelector from "./components-game-section/SortSelector";
 import { Platform } from "./hooks/useGames";
 import { Genre } from "./hooks/useGenres";
 
@@ -20,7 +20,12 @@ export interface GameQuery {
 type Page = 'home' | 'games' | 'movies' | 'about';
 
 function App() {
-  const [gameQuery, setGameQuery] = useState<GameQuery>({} as GameQuery);
+  const [gameQuery, setGameQuery] = useState<GameQuery>({
+    genre: null,
+    platform: null,
+    sortOrder: '',
+    searchText: ''
+  });
   const [currentPage, setCurrentPage] = useState<Page>('games');
   
   return (
