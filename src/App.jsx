@@ -6,6 +6,9 @@ import GenreList from "./components-game-section/GenreList";
 import NavBar from "./components-game-section/NavBar";
 import PlatformSelector from "./components-game-section/PlatformSelector";
 import SortSelector from "./components-game-section/SortSelector";
+import HomePage from "./component-home/Home";
+import About from "./component-about/About";
+import { Movies } from "./component-movie";
 function App() {
   const [gameQuery, setGameQuery] = useState({
     genre: null,
@@ -13,13 +16,13 @@ function App() {
     sortOrder: '',
     searchText: ''
   });
-  const [currentPage, setCurrentPage] = useState('games');
+  const [currentPage, setCurrentPage] = useState('home');
   return <Grid templateAreas={{
     base: `"nav" "main"`,
-    lg: `"nav nav" "aside main"`
+    lg: currentPage === 'games' ? `"nav nav" "aside main"` : `"nav" "main"`
   }} templateColumns={{
     base: '1fr',
-    lg: '250px 1fr'
+    lg: currentPage === 'games' ? '220px 1fr' : '1fr'
   }}>
       <GridItem area="nav">
         <NavBar onSearch={searchText => setGameQuery({
@@ -28,7 +31,7 @@ function App() {
       })} currentPage={currentPage} onPageChange={setCurrentPage} />
       </GridItem>
       <Show above="lg">
-        <GridItem area="aside" paddingX={5}>
+        <GridItem area="aside" paddingX={3}>
           {currentPage === 'games' && <GenreList selectedGenre={gameQuery.genre} onSelectGenre={genre => setGameQuery({
           ...gameQuery,
           genre
@@ -36,7 +39,8 @@ function App() {
         </GridItem>
       </Show>
       <GridItem area="main">
-        {currentPage === 'games' && <Box paddingLeft={2}>
+        <div className="main-container">
+        {currentPage === 'games' && <Box paddingLeft={0}>
             <GameHeading gameQuery={gameQuery} />
             <Flex marginBottom={5}>
               <Box marginRight={5}>
@@ -52,18 +56,10 @@ function App() {
             </Flex>
             <GameGrid gameQuery={gameQuery} />
           </Box>}
-        {currentPage === 'home' && <Box paddingLeft={2}>
-            <Box as="h1" fontSize="3xl" fontWeight="bold" marginTop={10}>Welcome to Game Explorer</Box>
-            <Box fontSize="lg" marginTop={4}>Browse and explore your favorite games!</Box>
-          </Box>}
-        {currentPage === 'movies' && <Box paddingLeft={2}>
-            <Box as="h1" fontSize="3xl" fontWeight="bold" marginTop={10}>Movies</Box>
-            <Box fontSize="lg" marginTop={4}>Movie section coming soon...</Box>
-          </Box>}
-        {currentPage === 'about' && <Box paddingLeft={2}>
-            <Box as="h1" fontSize="3xl" fontWeight="bold" marginTop={10}>About</Box>
-            <Box fontSize="lg" marginTop={4}>This is a game and movie explorer application built with React and Chakra UI.</Box>
-          </Box>}
+        {currentPage === 'home' && <HomePage />}
+        {currentPage === 'movies' && <Movies />}
+        {currentPage === 'about' && <About />}
+        </div>
       </GridItem>
     </Grid>;
 }
