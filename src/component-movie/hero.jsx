@@ -1,7 +1,7 @@
 import React from "react"
 import "./movies.css"
 
-export const Hero = ({ fetchedData }) => {
+export const Hero = ({ fetchedData, onWatch }) => {
   const item = (fetchedData?.Search || [])[0]
   if (!item) return null
 
@@ -17,7 +17,7 @@ export const Hero = ({ fetchedData }) => {
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">{item.Title}</h2>
           <p className="text-lg md:text-xl text-gray-300 mb-6">{item.Year} • {item.Type}</p>
           <div className="flex gap-4 flex-wrap">
-            <button className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
+            <button onClick={() => onWatch?.(item)} className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
               Watch Now
             </button>
             <button className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-semibold transition-all backdrop-blur-sm">

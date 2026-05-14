@@ -1,7 +1,7 @@
 import React from "react"
 import "./movies.css"
 
-const FeaturedCard = ({ movie, size = "small" }) => {
+const FeaturedCard = ({ movie, size = "small", onWatch }) => {
     if (!movie) return null
 
     const poster = movie.Poster !== "N/A"
@@ -31,7 +31,7 @@ const FeaturedCard = ({ movie, size = "small" }) => {
                 <span className="featured-year">{movie.Year}</span>
 
                 {size === "large" && (
-                    <button className="featured-watch-btn">
+                    <button className="featured-watch-btn" onClick={() => onWatch?.(movie)}>
                         ▶ Watch Now
                     </button>
                 )}
@@ -40,7 +40,7 @@ const FeaturedCard = ({ movie, size = "small" }) => {
     )
 }
 
-export const Featured = ({ fetchedData }) => {
+export const Featured = ({ fetchedData, onWatch }) => {
     const movies = fetchedData?.Search || []
     const large = movies[0]
     const medium = movies.slice(1, 3)
@@ -66,7 +66,7 @@ export const Featured = ({ fetchedData }) => {
 
             {/* Top row */}
             <div className="featured-top-row">
-                <FeaturedCard movie={large} size="large" />
+                <FeaturedCard movie={large} size="large" onWatch={onWatch} />
                 <div className="featured-medium-grid">
                     {medium.map((m, i) => (
                         <FeaturedCard key={m?.imdbID || i} movie={m} size="medium" />

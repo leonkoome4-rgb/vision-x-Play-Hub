@@ -3,7 +3,7 @@ import "./movies.css"
 
 const GENRES = ["All", "Movie", "Series", "Episode"]
 
-export const FilteredSection = ({ fetchedData }) => {
+export const FilteredSection = ({ fetchedData, onWatch }) => {
   const [activeFilter, setActiveFilter] = useState("All")
   const movies = fetchedData?.Search || []
 
@@ -43,18 +43,21 @@ export const FilteredSection = ({ fetchedData }) => {
 
       {filtered.length > 0 ? (
         <div className="moviegrid">
-          {filtered.map(movie => {
+            {filtered.map(movie => {
             const poster = movie.Poster !== "N/A"
               ? movie.Poster
               : "https://placehold.co/300x450/1c1c20/ff4500?text=No+Poster"
-            return (
+                return (
               <div key={movie.imdbID}>
                 <img src={poster} alt={movie.Title} />
                 <h2>{movie.Title}</h2>
                 <p className="text-sm text-gray-400">{movie.Year}</p>
-                <span className="inline-block mt-2 text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-1 rounded-full uppercase tracking-wide">
-                  {movie.Type}
-                </span>
+                <div className="mt-2 flex items-center gap-3">
+                  <span className="inline-block text-xs font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-1 rounded-full uppercase tracking-wide">
+                    {movie.Type}
+                  </span>
+                  <button onClick={() => onWatch?.(movie)} className="px-3 py-1 bg-red-600 text-white rounded-md text-sm">▶ Watch trailer </button>
+                </div>
               </div>
             )
           })}
