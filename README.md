@@ -60,53 +60,40 @@ The platform is built with a modern frontend stack: **Vite + React** for blazing
 
 #  Screenshots
 
-> **Note:** Replace the placeholder image URLs below with actual screenshots from your deployed app or local development environment. Recommended tool: [ShareX](https://getsharex.com/) or browser DevTools screenshot.
 
 ###  Home [Landing Page]
-![Home Page](https://via.placeholder.com/900x500/0d1117/ffffff?text=📸+Home+Page+Screenshot+Here)
+![First Image](./src/assets/imgs/image.png)
 *The main landing page featuring hero banners, trending movies, and top-rated games at a glance.*
 
 ---
 
 ###  Login & Registration
-![Auth Page](https://via.placeholder.com/900x500/0d1117/ffffff?text=📸+Login+%2F+Register+Screenshot+Here)
+![Second Image](./src/assets/imgs/image1.png)
 *JWT-secured authentication screens with clean form design and validation feedback.*
 
 ---
 
-###  Movie Section — Browse & Discover
-![Movie Browse](https://via.placeholder.com/900x500/01B4E4/ffffff?text=📸+Movie+Browse+Page+Screenshot+Here)
+###  Games Section — Browse & Discover
+![games](./src/assets/imgs/image11.png)
 *Browse trending, popular, top-rated, and upcoming movies powered by the TMDB API.*
 
 ---
 
-###  Movie Detail Page
-![Movie Detail](https://via.placeholder.com/900x500/01B4E4/ffffff?text=📸+Movie+Detail+Page+Screenshot+Here)
+###  Movie Section — Browse & Discover
+![Movies](./src/assets/imgs/image2.png)
 *Individual movie page showing full synopsis, cast, genres, rating, and embedded trailer.*
 
 ---
 
-###  Games Section — Browse & Discover
-![Games Browse](https://via.placeholder.com/900x500/212121/ffffff?text=📸+Games+Browse+Page+Screenshot+Here)
+###  Movie Detail Page Part Two
+![Movies](./src/assets/imgs/image22.png)
 *Explore top-rated, trending, and new releases from the RAWG.IO games database.*
 
 ---
 
-###  Game Detail Page
-![Game Detail](https://via.placeholder.com/900x500/212121/ffffff?text=📸+Game+Detail+Page+Screenshot+Here)
+###  About & Contacts Page
+![About](./src/assets/imgs/image3.png)
 *Individual game page featuring cover art, description, platforms, ESRB rating, and screenshots.*
-
----
-
-###  Search Results
-![Search Page](https://via.placeholder.com/900x500/0d1117/ffffff?text=📸+Search+Results+Screenshot+Here)
-*Unified search across movies and games simultaneously, with filter/sort options.*
-
----
-
-###  User Profile & Watchlist
-![Profile Page](https://via.placeholder.com/900x500/0d1117/ffffff?text=📸+Profile+%2F+Watchlist+Screenshot+Here)
-*Personal dashboard showing saved movies, favorite games, and account settings.*
 
 ---
 
@@ -119,6 +106,7 @@ The platform is built with a modern frontend stack: **Vite + React** for blazing
 - See **audience and critic ratings**
 - Genre-based filtering and sorting
 - Movie search with instant results
+- Ability to favorite a movie
 
 ###  Game Features (Powered by RAWG.IO)
 - Browse **Top Rated**, **New Releases**, and **Trending** games
@@ -135,6 +123,7 @@ The platform is built with a modern frontend stack: **Vite + React** for blazing
 - Personal **game library / favorites** list
 - Persistent session with token refresh
 - Clean logout and session management
+- Favorites Section
 
 ###  General Platform Features
 - **Unified search** across both movies and games
