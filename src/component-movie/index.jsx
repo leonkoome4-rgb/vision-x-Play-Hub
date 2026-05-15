@@ -18,7 +18,7 @@ const formatMovies = (results) =>
     Poster: item.poster_path ? `${IMG_BASE}${item.poster_path}` : "N/A"
   }))
 
-export const Movies = () => {
+export const Movies = ({ favorites = [], onToggleFavorite, signedIn, username }) => {
   const [fetchedData, setFetchedData] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -126,11 +126,12 @@ export const Movies = () => {
             setSearchedMovie={setSearchedMovie}
             setQuery={setQuery}
           />
-          <Hero fetchedData={fetchedData} onWatch={handleFetchTrailer} />
+          <Hero fetchedData={fetchedData} onWatch={handleFetchTrailer} onFavorite={onToggleFavorite} favorites={favorites} signedIn={signedIn} username={username} />
           <div className="h-px bg-white/7" />
-          <Featured fetchedData={fetchedData} onWatch={handleFetchTrailer} />
+          <Featured fetchedData={fetchedData} onWatch={handleFetchTrailer} onFavorite={onToggleFavorite} favorites={favorites} signedIn={signedIn} username={username} />
           <div className="h-px bg-white/7" />
-          <FilteredSection fetchedData={fetchedData} onWatch={handleFetchTrailer} />
+          <FilteredSection fetchedData={fetchedData} onWatch={handleFetchTrailer} onFavorite={onToggleFavorite} favorites={favorites} signedIn={signedIn} username={username} />
+          
           <TrailerModal open={trailerOpen} onClose={() => setTrailerOpen(false)} videoKey={trailerKey} title={trailerTitle} />
         </div>
       )}

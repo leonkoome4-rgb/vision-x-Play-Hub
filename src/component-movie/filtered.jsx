@@ -3,7 +3,7 @@ import "./movies.css"
 
 const GENRES = ["All", "Movie", "Series", "Episode"]
 
-export const FilteredSection = ({ fetchedData, onWatch }) => {
+export const FilteredSection = ({ fetchedData, onWatch, onFavorite, favorites = [] }) => {
   const [activeFilter, setActiveFilter] = useState("All")
   const movies = fetchedData?.Search || []
 
@@ -57,6 +57,9 @@ export const FilteredSection = ({ fetchedData, onWatch }) => {
                     {movie.Type}
                   </span>
                   <button onClick={() => onWatch?.(movie)} className="px-3 py-1 bg-red-600 text-white rounded-md text-sm">▶ Watch trailer </button>
+                  <button onClick={(e) => { e.stopPropagation(); onFavorite?.({ id: movie.imdbID, title: movie.Title, poster: poster, type: movie.Type }) }} className="px-3 py-1 bg-white/10 text-white rounded-md text-sm border border-white/10">
+                    {favorites.some(f => f.id === movie.imdbID && f.type === movie.Type) ? '♥' : '♡'}
+                  </button>
                 </div>
               </div>
             )

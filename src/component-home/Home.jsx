@@ -1,23 +1,17 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./Home.css";
 
-function HomePage() {
+function HomePage({ signedIn, username, onSignIn, onSignOut, favorites: propFavorites = [], onToggleFavorite }) {
   const [continueItem, setContinueItem] = useState(() => {
     if (typeof window === "undefined") return null;
     const savedItem = localStorage.getItem("continueItem");
     return savedItem ? JSON.parse(savedItem) : null;
   });
-  const [signedIn, setSignedIn] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("signedIn") === "true";
-  });
   const contentRef = useRef(null);
 
   const [signInVisible, setSignInVisible] = useState(false);
-  const [username, setUsername] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("username") || "";
-  });
+  const [usernameState, setUsernameState] = useState("");
+  const [favorites, setFavorites] = useState(propFavorites || []);
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [signInError, setSignInError] = useState("");
 
@@ -196,22 +190,49 @@ function HomePage() {
       return;
     }
 
-    const derivedName = credentials.email.split("@")[0];
-    setSignedIn(true);
-    setUsername(derivedName);
-    setSignInVisible(false);
-    setSignInError("");
-    localStorage.setItem("signedIn", "true");
-    localStorage.setItem("username", derivedName);
-    setCredentials({ email: "", password: "" });
+    // best-effort POST sign-in event, then inform parent (App) to set session and load favorites
+    (async () => {
+      try {
+        await fetch("/dp.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "signin", email: credentials.email })
+        });
+      } catch (e) {}
+
+      const derivedName = credentials.email.split("@")[0];
+      setUsernameState(derivedName);
+      setSignInVisible(false);
+      setSignInError("");
+      setCredentials({ email: "", password: "" });
+      onSignIn?.(credentials.email);
+    })();
   };
 
   const handleSignOut = () => {
-    setSignedIn(false);
-    setUsername("");
-    localStorage.removeItem("signedIn");
-    localStorage.removeItem("username");
+    onSignOut?.();
+    setUsernameState("");
+    setFavorites([]);
   };
+  useEffect(() => {
+    setFavorites(propFavorites || [])
+  }, [propFavorites])
+
+  const isFavorited = (item) => {
+    return (favorites || []).some(f => f.id === item.id && f.type === item.type);
+  }
+
+  const handleToggleFavoriteLocal = async (item) => {
+    if (!signedIn) {
+      setSignInVisible(true);
+      return;
+    }
+    // delegate to parent which manages persistence
+    try {
+      const updated = await onToggleFavorite?.(item)
+      if (updated) setFavorites(updated)
+    } catch (e) {}
+  }
 
   const filteredMovies = movies;
   const filteredGames = games;
@@ -259,6 +280,30 @@ function HomePage() {
         </div>
       )}
 
+      {signedIn && favorites.length > 0 && (
+        <div className="main-container">
+          <section className="section">
+            <h2 className="section-header">⭐ Your Favorites</h2>
+            <div className="grid-5">
+              {favorites.map((fav, i) => (
+                <div key={`${fav.type}-${fav.id}-${i}`} className="card">
+                  <div onClick={() => handleContinue({ ...fav, type: fav.type })} style={{cursor:'pointer'}}>
+                    <img className="thumb" src={fav.poster || fav.cover} alt={fav.title || fav.Title || fav.name} />
+                    <div style={{padding: '0.5rem'}}>
+                      <h3 className="card-title">{fav.title || fav.Title || fav.name}</h3>
+                      <p className="genre-badge">{fav.genre || fav.Type || ''}</p>
+                    </div>
+                  </div>
+                  <div style={{padding: '0.5rem'}}>
+                    <button onClick={() => handleToggleFavoriteLocal(fav)} className="btn-ghost">Remove</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+
       {/* Movies Section (5 columns grid) */}
       <main className="content" ref={contentRef}>
         <div className="main-container">
@@ -268,9 +313,20 @@ function HomePage() {
               {sortedMovies.map((movie) => (
                 <div key={movie.id} className="card" onClick={() => handleContinue({ ...movie, type: "movie" })}>
                   <img className="thumb" src={movie.poster} alt={movie.title} />
-                  <div style={{padding: '0.5rem'}}>
-                    <h3 className="card-title">{movie.title}</h3>
-                    <p className="genre-badge">{movie.genre}</p>
+                  <div style={{padding: '0.5rem', display:'flex', alignItems:'center', justifyContent:'space-between', gap:8}}>
+                    <div>
+                      <h3 className="card-title">{movie.title}</h3>
+                      <p className="genre-badge">{movie.genre}</p>
+                    </div>
+                    <div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleToggleFavoriteLocal({ id: movie.id, title: movie.title, poster: movie.poster, genre: movie.genre, type: 'movie' }) }}
+                        className="btn-ghost"
+                        aria-label="Toggle favorite"
+                      >
+                        {isFavorited({ id: movie.id, type: 'movie' }) ? '♥' : '♡'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -286,8 +342,21 @@ function HomePage() {
                   {sortedGames.map((game) => (
                     <div key={game.id} className="carousel-card" onClick={() => handleContinue({ ...game, type: "game" })}>
                       <img className="thumb" src={game.cover} alt={game.title} />
-                      <h3 className="card-title">{game.title}</h3>
-                      <p className="genre-badge">{game.genre}</p>
+                      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:8}}>
+                        <div>
+                          <h3 className="card-title">{game.title}</h3>
+                          <p className="genre-badge">{game.genre}</p>
+                        </div>
+                        <div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleToggleFavoriteLocal({ id: game.id, title: game.title, cover: game.cover, genre: game.genre, type: 'game' }) }}
+                            className="btn-ghost"
+                            aria-label="Toggle favorite"
+                          >
+                            {isFavorited({ id: game.id, type: 'game' }) ? '♥' : '♡'}
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

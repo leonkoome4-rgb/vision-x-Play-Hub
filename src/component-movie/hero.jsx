@@ -1,7 +1,7 @@
 import React from "react"
 import "./movies.css"
 
-export const Hero = ({ fetchedData, onWatch }) => {
+export const Hero = ({ fetchedData, onWatch, onFavorite, favorites = [] }) => {
   const item = (fetchedData?.Search || [])[0]
   if (!item) return null
 
@@ -20,8 +20,11 @@ export const Hero = ({ fetchedData, onWatch }) => {
             <button onClick={() => onWatch?.(item)} className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
               Watch Now
             </button>
-            <button className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-semibold transition-all backdrop-blur-sm">
-              Add to List
+            <button
+              onClick={() => onFavorite?.( { id: item.imdbID, title: item.Title, poster: item.Poster, type: item.Type } )}
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-semibold transition-all backdrop-blur-sm"
+            >
+              {favorites.some(f => f.id === item.imdbID && f.type === item.Type) ? '♥ Favorited' : '♡ Add to Favorites'}
             </button>
           </div>
         </div>

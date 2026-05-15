@@ -1,7 +1,7 @@
 import React from "react"
 import "./movies.css"
 
-const FeaturedCard = ({ movie, size = "small", onWatch }) => {
+const FeaturedCard = ({ movie, size = "small", onWatch, onFavorite, favorites = [] }) => {
     if (!movie) return null
 
     const poster = movie.Poster !== "N/A"
@@ -30,17 +30,26 @@ const FeaturedCard = ({ movie, size = "small", onWatch }) => {
                 </h3>
                 <span className="featured-year">{movie.Year}</span>
 
-                {size === "large" && (
-                    <button className="featured-watch-btn" onClick={() => onWatch?.(movie)}>
-                        ▶ Watch Now
-                    </button>
-                )}
+                                <div style={{display:'flex', gap:8, marginTop:12, alignItems:'center'}}>
+                                    {size === "large" && (
+                                        <button className="featured-watch-btn" onClick={() => onWatch?.(movie)}>
+                                                ▶ Watch Now
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => onFavorite?.({ id: movie.imdbID, title: movie.Title, poster: movie.Poster, type: movie.Type })}
+                                        className="featured-see-all"
+                                        style={{background:'transparent', border:'1px solid rgba(255,255,255,0.06)'}}
+                                    >
+                                        {favorites.some(f => f.id === movie.imdbID && f.type === movie.Type) ? '♥ Liked' : '♡ Favorite'}
+                                    </button>
+                                </div>
             </div>
         </div>
     )
 }
 
-export const Featured = ({ fetchedData, onWatch }) => {
+export const Featured = ({ fetchedData, onWatch, onFavorite, favorites = [] }) => {
     const movies = fetchedData?.Search || []
     const large = movies[0]
     const medium = movies.slice(1, 3)
@@ -66,10 +75,10 @@ export const Featured = ({ fetchedData, onWatch }) => {
 
             {/* Top row */}
             <div className="featured-top-row">
-                <FeaturedCard movie={large} size="large" onWatch={onWatch} />
+                <FeaturedCard movie={large} size="large" onWatch={onWatch} onFavorite={onFavorite} favorites={favorites} />
                 <div className="featured-medium-grid">
                     {medium.map((m, i) => (
-                        <FeaturedCard key={m?.imdbID || i} movie={m} size="medium" />
+                        <FeaturedCard key={m?.imdbID || i} movie={m} size="medium" onFavorite={onFavorite} favorites={favorites} />
                     ))}
                 </div>
             </div>
@@ -78,7 +87,7 @@ export const Featured = ({ fetchedData, onWatch }) => {
             {small.length > 0 && (
                 <div className="featured-bottom-row">
                     {small.map((m, i) => (
-                        <FeaturedCard key={m?.imdbID || i} movie={m} size="small" />
+                        <FeaturedCard key={m?.imdbID || i} movie={m} size="small" onFavorite={onFavorite} favorites={favorites} />
                     ))}
                 </div>
             )}
